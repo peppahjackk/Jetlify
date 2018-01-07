@@ -1,12 +1,22 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // console.log('Hellow world');
-    var div = document.createElement("div");
-    document.body.appendChild(div);
-    div.innerText = "test123";
-});
+var initJetlify = function() {
+    var loadCheck = 0;
 
-var div = document.createElement("div");
-    document.body.appendChild(div);
-    div.innerText = "test123";
+    var readContent = setInterval(function() {
+        console.log(document.readyState);
 
-    console.log('Hellow');
+        if (document.readyState === 'complete') {
+        	clearInterval(readContent);
+        	var prodList = document.getElementsByClassName('list-products')[0].children;
+        	console.log(prodList);
+            for (prod of prodList) {
+                console.log(prod.getElementsByClassName('tile-contents'));
+            }
+        }
+
+        loadCheck++;
+        if (loadCheck > 5) {
+        	clearInterval(readContent);
+        	return;
+        }
+    }, 500)
+}();
