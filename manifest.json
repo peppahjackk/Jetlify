@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+
+  "name": "Jetlify",
+  "description": "Jetlify helps you find the absolute best price on Jet products",
+  "version": "1.0",
+  "permissions": [
+    "activeTab"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["https://*/*"],
+      "js": ["content-script.js"]
+    }
+  ],
+  "browser_action": {
+    "default_title": "Jetlify"
+  }
+}
