@@ -6,10 +6,16 @@ var initJetlify = function() {
 
         if (document.readyState === 'complete') {
         	clearInterval(readContent);
+        	var pricePerList = document.getElementsByClassName('price-per');
+
+        	for (pricePerItem of pricePerList) {
+        		var pricePer = pricePerItem.innerHTML.replace(/[\(\)]/g,'').split('/');
+        		console.log(pricePer);
+        	}
         	var prodList = document.getElementsByClassName('list-products')[0].children;
         	console.log(prodList);
             for (prod of prodList) {
-                console.log(prod.getElementsByClassName('tile-contents'));
+                var content = (prod.getElementsByClassName('tile-contents'));
             }
         }
 
