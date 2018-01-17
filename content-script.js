@@ -22,14 +22,21 @@ var initJetlify = function() {
 
                     pricePer = prod.getElementsByClassName('price-per')[0];
 
+                    var price = pricingBlock.getAttribute('data-price');
+
                     if (typeof pricePer != 'undefined') {
-                        pricingBlock = [pricingBlock.getElementsByClassName('price-std-block')[0].textContent, pricePer.innerHTML];
+                        pricingBlock = [price, pricePer.innerHTML];
                     } else {
-                        pricingBlock = [pricingBlock.getElementsByClassName('price-std-block')[0].textContent];
+                        pricingBlock = [price];
                     }
 
-                    calculatePerItem(title, pricingBlock, units);
+                    var finalPer = findUnit(title, pricingBlock, units);
 
+                    if (finalPer != undefined) {
+                        appendPer(prod, finalPer);
+                    } else {
+                        console.log('No price per found');
+                    }
                 }
             }, 200);
         }
@@ -57,27 +64,43 @@ var initJetlify = function() {
         }
     };
 
-    var calculatePerItem = function(title, price, units) {
+    var findUnit = function(title, price, units) {
+        var unitPer;
         for (unit of units) {
             if (title.indexOf(unit) >= 0) {
-                console.log('title contains exact');
+                unitPer = calculatePerItem(title, price, unit);
+                break;
             } else {
                 for (unitType of unitKey) {
                     var unitInKey = unitType.indexOf(unit);
                     if (unitInKey >= 0) {
                         for (unitAbbrev of unitType) {
-                            console.log(unitAbbrev);
                             if (title.indexOf(unitAbbrev) >= 0) {
-                                console.log('title contains similar');
+                                unitPer = calculatePerItem(title, price, unitAbbrev);
+                                break;
                             }
                         }
                     }
                 }
             }
-
         }
-        console.log(title, price, units);
+        return unitPer;
     };
+
+    var calculatePerItem = function(title, price, unit) {
+        var unitLoc = title.match(/[0-9]+/g);
+        if (unitLoc.length === 1) {
+            return price[0] / unitLoc[0];
+        }
+
+    };
+
+    var appendPer = function(product, finalPer, unit) {
+        console.log(product);
+        var tempPricePer = '<span class="price-per font-normal"> ($' + finalPer + '/Count)</span>'
+        product = product.getElementsByClassName('price-non-sale')[0];
+        product.append(tempPricePer);
+    }
 
     var unitKey = [
         ['count', 'ct', 'cnt'],
