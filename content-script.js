@@ -35,10 +35,14 @@ var initJetlify = function() {
                         pricingBlock = [price];
                     }
 
-                    var finalPer = findUnit(title, pricingBlock, units);
+                    var itemUnit = findUnit(title, pricingBlock, units);
+
+                    if (itemUnit) {
+                        var finalPer = calculatePerItem(title, pricingBlock, itemUnit);
+                    }
 
                     if (finalPer != undefined) {
-                        appendPer(prod, finalPer);
+                        appendPer(prod, finalPer, itemUnit);
                     } else {
                         console.log('No price per found');
                     }
@@ -69,27 +73,30 @@ var initJetlify = function() {
         }
     };
 
-    var findUnit = function(title, price, unitKey) {
+    var findUnit = function(title, price, unitList) {
         var unitPer;
-        for (unit of unitKey) {
-            if (title.indexOf(unit) >= 0) { // 
-                unitPer = calculatePerItem(title, price, unit);
-                break;
+        for (unit of unitList) {
+            // Checks for exact unit match in title
+            if (title.indexOf(unit) >= 0) {
+                return unit;
             } else {
+                // Checks for unit abbreviation
                 for (unitType of unitKey) {
-                    var unitInKey = unitType.indexOf(unit);
-                    if (unitInKey >= 0) {
-                        for (unitAbbrev of unitType) {
-                            if (title.indexOf(unitAbbrev) >= 0) {
-                                unitPer = calculatePerItem(title, price, unitAbbrev);
-                                break;
+                    // Checks if each key array has the pre-listed unit
+                    var unitHasAlt = unitType.indexOf(unit);
+                    if (unitHasAlt >= 0) {
+                        console.log(unit + ', ' + unitType + ', ' + unitHasAlt + ', ' + unitKey);
+                        for (unitAlt of unitType) {
+                            if (title.indexOf(unitAlt) >= 0) {
+                                return unit;
                             }
                         }
+                        
                     }
                 }
             }
         }
-        return unitPer;
+        return false;
     };
 
     var calculatePerItem = function(title, price, unit) {
@@ -102,8 +109,8 @@ var initJetlify = function() {
     };
 
     var appendPer = function(product, finalPer, unit) {
-        
-        var priceValue = document.createTextNode('($' + finalPer + '/Count)');
+
+        var priceValue = document.createTextNode('($' + finalPer + '/' + unit + ')');
 
         var priceNode = document.createElement('p').appendChild(priceValue);
 
