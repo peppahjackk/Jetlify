@@ -11,8 +11,13 @@ var initJetlify = function() {
             clearInterval(readContent);
             // Gives another beat for the dynamic content to load
             window.setTimeout(function() {
+
+                // Gets all pre-listed price per blocks
                 var pricePerList = document.getElementsByClassName('price-per');
+
+                // Gets pre-listed units
                 units = getExistingUnits(pricePerList);
+
                 var prodList = document.getElementsByClassName('list-products')[0].children;
 
                 for (prod of prodList) {
@@ -64,10 +69,10 @@ var initJetlify = function() {
         }
     };
 
-    var findUnit = function(title, price, units) {
+    var findUnit = function(title, price, unitKey) {
         var unitPer;
-        for (unit of units) {
-            if (title.indexOf(unit) >= 0) {
+        for (unit of unitKey) {
+            if (title.indexOf(unit) >= 0) { // 
                 unitPer = calculatePerItem(title, price, unit);
                 break;
             } else {
@@ -88,18 +93,22 @@ var initJetlify = function() {
     };
 
     var calculatePerItem = function(title, price, unit) {
-        var unitLoc = title.match(/[0-9]+/g);
-        if (unitLoc.length === 1) {
-            return price[0] / unitLoc[0];
+        var numItems = title.match(/[0-9]+/g);
+
+        if (numItems.length === 1) {
+            return Number.parseFloat(price[0] / numItems[0]).toFixed(4);
         }
 
     };
 
     var appendPer = function(product, finalPer, unit) {
-        console.log(product);
-        var tempPricePer = '<span class="price-per font-normal"> ($' + finalPer + '/Count)</span>'
-        product = product.getElementsByClassName('price-non-sale')[0];
-        product.append(tempPricePer);
+        
+        var priceValue = document.createTextNode('($' + finalPer + '/Count)');
+
+        var priceNode = document.createElement('p').appendChild(priceValue);
+
+        product = product.getElementsByClassName('price-std-block')[0];
+        product.append(priceNode);
     }
 
     var unitKey = [

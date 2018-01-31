@@ -8,5 +8,6 @@ USD is currently the only currency supported.
 ### To Do
 
 * Add missing price per deals
-* Highlight lowest price per deals
+* Colorize lowest price per deals
 * Update on page change
+* Optimize find unit with just grabbing .price-per
