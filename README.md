@@ -7,7 +7,13 @@ USD is currently the only currency supported.
 
 ### To Do
 
-* Add missing price per deals
+* Case where x packs of y quantities occurs
+```
+if (priceFound/otherPriceAvg > 2 && twoQuantitiesInTitle) {
+	try priceFound * secondQuanty then recurse
+} else if (priceFound/otherPriceAvg > 2 && oneQuantity) {
+	textNode = Unsure of PricePer
+}
+```
 * Colorize lowest price per deals
 * Update on page change
-* Optimize find unit with just grabbing .price-per

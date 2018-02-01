@@ -18,6 +18,7 @@ var initJetlify = function() {
                 // Gets pre-listed units
                 units = getExistingUnits(pricePerList);
 
+                console.log(document.getElementsByClassName('list-products'));
                 var prodList = document.getElementsByClassName('list-products')[0].children;
 
                 for (prod of prodList) {
@@ -38,11 +39,11 @@ var initJetlify = function() {
                     var itemUnit = findUnit(title, pricingBlock, units);
 
                     if (itemUnit) {
-                        var finalPer = calculatePerItem(title, pricingBlock, itemUnit);
+                        var finalPer = calculatePerItem(title, pricingBlock, itemUnit.inTitle);
                     }
 
                     if (finalPer != undefined) {
-                        appendPer(prod, finalPer, itemUnit);
+                        appendPer(prod, finalPer, itemUnit.asPer);
                     } else {
                         console.log('No price per found');
                     }
@@ -78,17 +79,22 @@ var initJetlify = function() {
         for (unit of unitList) {
             // Checks for exact unit match in title
             if (title.indexOf(unit) >= 0) {
-                return unit;
+                return {
+                    inTitle:unit,
+                    asPer:unit
+                };
             } else {
                 // Checks for unit abbreviation
                 for (unitType of unitKey) {
                     // Checks if each key array has the pre-listed unit
                     var unitHasAlt = unitType.indexOf(unit);
                     if (unitHasAlt >= 0) {
-                        console.log(unit + ', ' + unitType + ', ' + unitHasAlt + ', ' + unitKey);
                         for (unitAlt of unitType) {
                             if (title.indexOf(unitAlt) >= 0) {
-                                return unit;
+                                return {
+                                    inTitle: unitAlt,
+                                    asPer: unit
+                                };
                             }
                         }
                         
@@ -100,13 +106,33 @@ var initJetlify = function() {
     };
 
     var calculatePerItem = function(title, price, unit) {
-        var numItems = title.match(/[0-9]+/g);
+        var quantities = title.match(/[0-9.]+/g);
 
-        if (numItems.length === 1) {
-            return Number.parseFloat(price[0] / numItems[0]).toFixed(4);
-        }
+        console.log(quantities);
+
+        return quantities.length === 1 ? Number.parseFloat(price[0] / quantities[0]).toFixed(4) : Number.parseFloat(price[0] / getClosestQuantity(quantities,title,unit)).toFixed(4);
 
     };
+
+    var getClosestQuantity = function(quantities,title,unit) {
+        var unitIndex = title.indexOf(unit);
+
+        var minDistance = title.length;
+        var minNum;
+
+        for (num of quantities) {
+            var numIndex = title.indexOf(num);
+            var numDistance = unitIndex - numIndex;
+
+            console.log(num, numIndex, unitIndex, numDistance, minDistance);
+            if (numDistance > 0 && numDistance < minDistance) {
+                console.log('setting lowest');
+                minNum = num;
+                minDistance = numDistance;
+            }
+        }
+        return minNum;
+    }
 
     var appendPer = function(product, finalPer, unit) {
 
