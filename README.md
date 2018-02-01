@@ -7,6 +7,7 @@ USD is currently the only currency supported.
 
 ### To Do
 
+* Case where two units occur in title
 * Case where x packs of y quantities occurs
 ```
 if (priceFound/otherPriceAvg > 2 && twoQuantitiesInTitle) {

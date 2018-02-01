@@ -48,7 +48,7 @@ var initJetlify = function() {
                         console.log('No price per found');
                     }
                 }
-            }, 200);
+            }, 300);
         }
 
         loadCheck++;
@@ -108,7 +108,6 @@ var initJetlify = function() {
     var calculatePerItem = function(title, price, unit) {
         var quantities = title.match(/[0-9.]+/g);
 
-        console.log(quantities);
 
         return quantities.length === 1 ? Number.parseFloat(price[0] / quantities[0]).toFixed(4) : Number.parseFloat(price[0] / getClosestQuantity(quantities,title,unit)).toFixed(4);
 
@@ -118,20 +117,20 @@ var initJetlify = function() {
         var unitIndex = title.indexOf(unit);
 
         var minDistance = title.length;
-        var minNum;
+        var closestNum;
 
         for (num of quantities) {
             var numIndex = title.indexOf(num);
             var numDistance = unitIndex - numIndex;
 
-            console.log(num, numIndex, unitIndex, numDistance, minDistance);
-            if (numDistance > 0 && numDistance < minDistance) {
-                console.log('setting lowest');
-                minNum = num;
-                minDistance = numDistance;
+            // If numOccurance is before unit set as closest If past, return previous num
+            if (numDistance > 0) {
+                closestNum = num;
+            } else if (numDistance < 0) {
+                return closestNum;
             }
         }
-        return minNum;
+        return closestNum;
     }
 
     var appendPer = function(product, finalPer, unit) {
@@ -145,7 +144,7 @@ var initJetlify = function() {
     }
 
     var unitKey = [
-        ['count', 'ct', 'cnt'],
+        ['count', 'ct', 'cnt', 'sheets'],
         ['ounces', 'oz', 'ounce']
     ];
 }();
