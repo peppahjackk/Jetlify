@@ -16,9 +16,8 @@ var initJetlify = function() {
                 var pricePerList = document.getElementsByClassName('price-per');
 
                 // Gets pre-listed units
-                units = getExistingUnits(pricePerList);
+                units = getExistingUnits(pricePerList, false);
 
-                console.log(document.getElementsByClassName('list-products'));
                 var prodList = document.getElementsByClassName('list-products')[0].children;
 
                 for (prod of prodList) {
@@ -26,40 +25,44 @@ var initJetlify = function() {
                     var title = content[0].childNodes[0].getElementsByClassName('name')[0].textContent.toLowerCase();
                     var pricingBlock = content[0].childNodes[1];
                     var onSale = false;
+                    var itemUnit;
+                    var hasPerUnit = false;
 
-                    pricePer = prod.getElementsByClassName('price-per')[0];
+                    pricePer = prod.getElementsByClassName('price-per');
 
                     var price = pricingBlock.getAttribute('data-price');
 
                     if (prod.getElementsByClassName('price-now').length) {
                         price = prod.getElementsByClassName('price-now')[0].textContent;
-                        
+
                         onSale = true;
-                        price = price.replace(/[$,]+/g,"");
-                        console.log(price);
+                        price = price.replace(/[$,]+/g, "");
                     }
 
-                    if (typeof pricePer != 'undefined') {
-                        pricingBlock = [price, pricePer.innerHTML];
+                    if (typeof pricePer[0] != 'undefined') {
+                        pricingBlock = [price, pricePer[0].innerHTML];
+                        pricePer = getExistingUnits(pricePer, true);
+                        hasPerUnit = true;
                     } else {
                         pricingBlock = [price];
                     }
 
-                    console.log(pricingBlock);
-
                     var itemUnit = findUnit(title, pricingBlock, units);
-
                     if (itemUnit) {
                         var finalPer = calculatePerItem(title, pricingBlock, itemUnit.inTitle);
                     }
 
                     if (finalPer != undefined) {
-                        appendPer(prod, finalPer, itemUnit.asPer, onSale);
+                        if (!hasPerUnit) {
+                            appendPer(prod, finalPer, itemUnit.inTitle, onSale);
+                        } else {
+                            appendPer(prod, finalPer, pricePer, onSale);
+                        }
                     } else {
                         console.log('No price per found');
                     }
                 }
-            }, 300);
+            }, 500);
         }
 
         loadCheck++;
@@ -70,19 +73,28 @@ var initJetlify = function() {
         }
     }, 500)
 
-    var getExistingUnits = function(list) {
-        for (pricePerItem of list) {
-            var pricePer = pricePerItem.innerHTML.replace(/[\(\)\s]/g, '').split('/');
-            var unit = pricePer[1].toLowerCase();
+    var getExistingUnits = function(list, singleProduct) {
 
-            if (unitList === undefined) {
-                unitList = [unit];
-            } else if (unitList.indexOf(unit) == -1) {
-                unitList.push(unit);
+        if (!singleProduct) {
+            for (pricePerItem of list) {
+                var pricePer = pricePerItem.innerHTML.replace(/[\(\)]/g, '').split('/');
+                var unit = pricePer[1].toLowerCase();
+
+                if (unitList === undefined) {
+                    unitList = [unit];
+                } else if (unitList.indexOf(unit) == -1) {
+                    unitList.push(unit);
+                }
             }
 
             return unitList;
+        } else {
+            var pricePer = list[0].innerHTML.replace(/[\(\)]/g, '').split('/');
+                var unit = pricePer[1].toLowerCase();
+
+                return unit;
         }
+
     };
 
     var findUnit = function(title, price, unitList) {
@@ -91,8 +103,8 @@ var initJetlify = function() {
             // Checks for exact unit match in title
             if (title.indexOf(unit) >= 0) {
                 return {
-                    inTitle:unit,
-                    asPer:unit
+                    inTitle: unit,
+                    asPer: unit
                 };
             } else {
                 // Checks for unit abbreviation
@@ -108,7 +120,7 @@ var initJetlify = function() {
                                 };
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -120,11 +132,11 @@ var initJetlify = function() {
         var quantities = title.match(/[0-9.]+/g);
 
 
-        return quantities.length === 1 ? Number.parseFloat(price[0] / quantities[0]).toFixed(4) : Number.parseFloat(price[0] / getClosestQuantity(quantities,title,unit)).toFixed(4);
+        return quantities.length === 1 ? Number.parseFloat(price[0] / quantities[0]).toFixed(4) : Number.parseFloat(price[0] / getClosestQuantity(quantities, title, unit)).toFixed(4);
 
     };
 
-    var getClosestQuantity = function(quantities,title,unit) {
+    var getClosestQuantity = function(quantities, title, unit) {
         var unitIndex = title.indexOf(unit);
 
         var minDistance = title.length;
@@ -159,6 +171,6 @@ var initJetlify = function() {
 
     var unitKey = [
         ['count', 'ct', 'cnt', 'sheets'],
-        ['ounces', 'oz', 'ounce']
+        ['fl oz', 'fluid oz', 'fl ounce', 'fl ounces', 'fluid ounce', 'fluid ounces', 'ounces', 'oz', 'ounce']
     ];
 }();
