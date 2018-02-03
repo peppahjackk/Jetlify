@@ -25,16 +25,27 @@ var initJetlify = function() {
                     var content = (prod.getElementsByClassName('tile-contents'));
                     var title = content[0].childNodes[0].getElementsByClassName('name')[0].textContent.toLowerCase();
                     var pricingBlock = content[0].childNodes[1];
+                    var onSale = false;
 
                     pricePer = prod.getElementsByClassName('price-per')[0];
 
                     var price = pricingBlock.getAttribute('data-price');
+
+                    if (prod.getElementsByClassName('price-now').length) {
+                        price = prod.getElementsByClassName('price-now')[0].textContent;
+                        
+                        onSale = true;
+                        price = price.replace(/[$,]+/g,"");
+                        console.log(price);
+                    }
 
                     if (typeof pricePer != 'undefined') {
                         pricingBlock = [price, pricePer.innerHTML];
                     } else {
                         pricingBlock = [price];
                     }
+
+                    console.log(pricingBlock);
 
                     var itemUnit = findUnit(title, pricingBlock, units);
 
@@ -43,7 +54,7 @@ var initJetlify = function() {
                     }
 
                     if (finalPer != undefined) {
-                        appendPer(prod, finalPer, itemUnit.asPer);
+                        appendPer(prod, finalPer, itemUnit.asPer, onSale);
                     } else {
                         console.log('No price per found');
                     }
@@ -133,13 +144,16 @@ var initJetlify = function() {
         return closestNum;
     }
 
-    var appendPer = function(product, finalPer, unit) {
-
+    var appendPer = function(product, finalPer, unit, onSale) {
         var priceValue = document.createTextNode('($' + finalPer + '/' + unit + ')');
-
         var priceNode = document.createElement('p').appendChild(priceValue);
 
-        product = product.getElementsByClassName('price-std-block')[0];
+        if (onSale) {
+            product = product.getElementsByClassName('price-sale-block')[0];
+        } else {
+            product = product.getElementsByClassName('price-std-block')[0];
+        }
+
         product.append(priceNode);
     }
 
