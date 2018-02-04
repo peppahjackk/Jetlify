@@ -170,8 +170,11 @@ var initJetlify = function() {
     }
 
     var appendPer = function(product, finalPer, unit, onSale) {
-        var priceValue = document.createTextNode('($' + finalPer + '/' + unit + ')');
-        var priceNode = document.createElement('p').appendChild(priceValue);
+        var priceValue = '($' + finalPer + '/' + unit + ')';
+        var priceNode = document.createElement('div');
+
+        priceNode.innerHTML = priceValue;
+        priceNode.className += 'price-perlify green';
 
         if (onSale) {
             product = product.getElementsByClassName('price-sale-block')[0];
@@ -179,7 +182,7 @@ var initJetlify = function() {
             product = product.getElementsByClassName('price-std-block')[0];
         }
 
-        product.append(priceNode);
+        product.appendChild(priceNode);
     }
 
     var appendErr = function(target, err) {
