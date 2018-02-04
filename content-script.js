@@ -1,8 +1,7 @@
 var initJetlify = function() {
     var loadCheck = 0,
         unitList,
-        units,
-        pricePer;
+        units;
 
     var readContent = setInterval(function() {
 
@@ -11,7 +10,6 @@ var initJetlify = function() {
             clearInterval(readContent);
             // Gives another beat for the dynamic content to load
             window.setTimeout(function() {
-
                 // Gets all pre-listed price per blocks
                 var pricePerList = document.getElementsByClassName('price-per');
 
@@ -21,47 +19,59 @@ var initJetlify = function() {
                 var prodList = document.getElementsByClassName('list-products')[0].children;
 
                 for (prod of prodList) {
-                    var content = (prod.getElementsByClassName('tile-contents'));
-                    var title = content[0].childNodes[0].getElementsByClassName('name')[0].textContent.toLowerCase();
-                    var pricingBlock = content[0].childNodes[1];
-                    var onSale = false;
-                    var itemUnit;
-                    var hasPerUnit = false;
+                    try {
+                        var content = (prod.getElementsByClassName('tile-contents'));
+                        var title = content[0].childNodes[0].getElementsByClassName('name')[0].textContent.toLowerCase();
+                        var pricingBlock = content[0].childNodes[1];
+                        var onSale = false;
+                        var itemUnit
+                        var finalPer = false;
+                        var hasPerUnit = false;
 
-                    pricePer = prod.getElementsByClassName('price-per');
+                        var pricePer = prod.getElementsByClassName('price-per');
 
-                    var price = pricingBlock.getAttribute('data-price');
+                        var price = pricingBlock.getAttribute('data-price');
 
-                    if (prod.getElementsByClassName('price-now').length) {
-                        price = prod.getElementsByClassName('price-now')[0].textContent;
+                        if (prod.getElementsByClassName('price-now').length) {
+                            price = prod.getElementsByClassName('price-now')[0].textContent;
 
-                        onSale = true;
-                        price = price.replace(/[$,]+/g, "");
-                    }
-
-                    if (typeof pricePer[0] != 'undefined') {
-                        pricingBlock = [price, pricePer[0].innerHTML];
-                        pricePer = getExistingUnits(pricePer, true);
-                        hasPerUnit = true;
-                    } else {
-                        pricingBlock = [price];
-                    }
-
-                    var itemUnit = findUnit(title, pricingBlock, units);
-                    if (itemUnit) {
-                        var finalPer = calculatePerItem(title, pricingBlock, itemUnit.inTitle);
-                    }
-
-                    if (finalPer != undefined) {
-                        if (!hasPerUnit) {
-                            appendPer(prod, finalPer, itemUnit.inTitle, onSale);
-                        } else {
-                            appendPer(prod, finalPer, pricePer, onSale);
+                            onSale = true;
+                            price = price.replace(/[$,]+/g, "");
                         }
-                    } else {
-                        console.log('No price per found');
+
+                        console.log(price + ', ' + pricePer);
+
+                        if (typeof pricePer[0] != 'undefined') {
+                            pricingBlock = [price, pricePer[0].innerHTML];
+                            pricePer = getExistingUnits(pricePer, true);
+                            hasPerUnit = true;
+                        } else {
+                            pricingBlock = [price];
+                        }
+
+                        var itemUnit = findUnit(title, pricingBlock, units);
+                        if (itemUnit) {
+                            finalPer = calculatePerItem(title, pricingBlock, itemUnit.inTitle);
+                        }
+
+                        console.log(finalPer);
+
+                        if (finalPer) {
+                            if (!hasPerUnit) {
+                                appendPer(prod, finalPer, itemUnit.inTitle, onSale);
+                            } else {
+                                appendPer(prod, finalPer, pricePer, onSale);
+                            }
+                        } else {
+                            console.log('No price per found');
+                            appendErr(prod, err);
+                        }
+                    } catch(err) {
+                        console.log('Error: ' + err);
+                        appendErr(prod, err);
                     }
                 }
+
             }, 500);
         }
 
@@ -71,6 +81,8 @@ var initJetlify = function() {
             console.log('ERROR: Could not read content')
             return;
         }
+
+
     }, 500)
 
     var getExistingUnits = function(list, singleProduct) {
@@ -90,15 +102,16 @@ var initJetlify = function() {
             return unitList;
         } else {
             var pricePer = list[0].innerHTML.replace(/[\(\)]/g, '').split('/');
-                var unit = pricePer[1].toLowerCase();
+            var unit = pricePer[1].toLowerCase();
 
-                return unit;
+            return unit;
         }
 
     };
 
     var findUnit = function(title, price, unitList) {
         var unitPer;
+
         for (unit of unitList) {
             // Checks for exact unit match in title
             if (title.indexOf(unit) >= 0) {
@@ -167,6 +180,14 @@ var initJetlify = function() {
         }
 
         product.append(priceNode);
+    }
+
+    var appendErr = function(target, err) {
+        var msg = document.createTextNode('Unsure.');
+        var msgEl = document.createElement('p').appendChild(msg);
+        target.getElementsByClassName('tile-pricing-block')[0].appendChild(msgEl);
+
+        console.log(target);
     }
 
     var unitKey = [
