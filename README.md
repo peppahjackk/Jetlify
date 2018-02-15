@@ -18,3 +18,4 @@ if (priceFound/otherPriceAvg > 2 && twoQuantitiesInTitle) {
 ```
 * Colorize lowest price per deals
 * Update on page change
+* Create logo

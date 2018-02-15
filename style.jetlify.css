@@ -1,3 +1,12 @@
 .price-perlify {
-	background-color: green;
+	background-color: #29C455;
+	color: #ffffff;
+	padding: 10px;
+    font-size: 24px;
+    line-height: 27px;
+    border-radius: 2px;
+}
+
+.product-tiles .tile-pricing-block {
+	height: 100px !important;
 }
