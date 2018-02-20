@@ -10,6 +10,7 @@ var initJetlify = function() {
             clearInterval(readContent);
             // Gives another beat for the dynamic content to load
             window.setTimeout(function() {
+                setupEventHandlers();
                 // Gets all pre-listed price per blocks
                 var pricePerList = document.getElementsByClassName('price-per');
 
@@ -71,6 +72,8 @@ var initJetlify = function() {
                 var pricePerlifyList = document.getElementsByClassName('price-perlify');
 
                 styleNodes(pricePerlifyList, ['pending', 'green']);
+
+
             }, 500);
         }
 
@@ -204,6 +207,22 @@ var initJetlify = function() {
         };
     }
 
+    var toggleClass = function(el, className) {
+        if (el.classList) {
+            el.classList.toggle(className);
+        } else {
+            var classes = el.className.split(' ');
+            var existingIndex = classes.indexOf(className);
+
+            if (existingIndex >= 0)
+                classes.splice(existingIndex, 1);
+            else
+                classes.push(className);
+
+            el.className = classes.join(' ');
+        }
+    }
+
     var LightenDarkenColor = function(col, amt) {
 
         var usePound = false;
@@ -234,25 +253,33 @@ var initJetlify = function() {
 
     }
 
-    var toggleClass = function(el, className) {
-        if (el.classList) {
-            el.classList.toggle(className);
-        } else {
-            var classes = el.className.split(' ');
-            var existingIndex = classes.indexOf(className);
+    var refreshPrices = function() {
+        console.log('refreshing');
+        initJetlify();
+    }
 
-            if (existingIndex >= 0)
-                classes.splice(existingIndex, 1);
-            else
-                classes.push(className);
+    var setupEventHandlers = function() {
+        console.log('setting up handlers');
+        // setRefreshHandlers(document.getElementsByClassName('add'));
+        // setRefreshHandlers(document.getElementsByClassName('quantity_change'));
+    }
 
-            el.className = classes.join(' ');
+    var setRefreshHandlers = function(elemList) {
+        for (button of elemList) {
+
+            button.addEventListener('click',function() {
+                window.setTimeout(function() {
+                    console.log('setting refresh')
+                    refreshPrices();
+                }, 5000);
+            });
         }
-
     }
 
     var unitKey = [
         ['count', 'ct', 'cnt', 'sheets'],
         ['fl oz', 'fluid oz', 'fl ounce', 'fl ounces', 'fluid ounce', 'fluid ounces', 'ounces', 'oz', 'ounce']
     ];
-}();
+};
+
+initJetlify();
