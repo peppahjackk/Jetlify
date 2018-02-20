@@ -39,8 +39,6 @@ var initJetlify = function() {
                             price = price.replace(/[$,]+/g, "");
                         }
 
-                        console.log(price + ', ' + pricePer);
-
                         if (typeof pricePer[0] != 'undefined') {
                             pricingBlock = [price, pricePer[0].innerHTML];
                             pricePer = getExistingUnits(pricePer, true);
@@ -54,8 +52,6 @@ var initJetlify = function() {
                             finalPer = calculatePerItem(title, pricingBlock, itemUnit.inTitle);
                         }
 
-                        console.log(finalPer);
-
                         if (finalPer) {
                             if (!hasPerUnit) {
                                 appendPer(prod, finalPer, itemUnit.inTitle, onSale);
@@ -66,10 +62,17 @@ var initJetlify = function() {
                             console.log('No price per found');
                             appendErr(prod, err);
                         }
-                    } catch(err) {
+                    } catch (err) {
                         console.log('Error: ' + err);
                         appendErr(prod, err);
                     }
+                }
+
+                var pricePerlifyList = document.getElementsByClassName('price-perlify');
+                for (prod of pricePerlifyList) {
+                    console.log(prod.className);
+                    toggleClass(prod, 'pending');
+                    toggleClass(prod, 'green');
                 }
 
             }, 500);
@@ -170,11 +173,13 @@ var initJetlify = function() {
     }
 
     var appendPer = function(product, finalPer, unit, onSale) {
-        var priceValue = '($' + finalPer + '/' + unit + ')';
-        var priceNode = document.createElement('div');
+        var priceNodeContainer = document.createElement('div');
+        var priceNode = document.createElement('p');
+        priceNodeContainer.appendChild(priceNode);
+        priceNodeContainer.className += 'price-perlify pending';
 
-        priceNode.innerHTML = priceValue;
-        priceNode.className += 'price-perlify green';
+
+        priceNode.innerHTML = '<span class="price-value">$' + finalPer + '</span>/' + unit;
 
         if (onSale) {
             product = product.getElementsByClassName('price-sale-block')[0];
@@ -182,7 +187,7 @@ var initJetlify = function() {
             product = product.getElementsByClassName('price-std-block')[0];
         }
 
-        product.appendChild(priceNode);
+        product.appendChild(priceNodeContainer);
     }
 
     var appendErr = function(target, err) {
@@ -191,6 +196,53 @@ var initJetlify = function() {
         target.getElementsByClassName('tile-pricing-block')[0].appendChild(msgEl);
 
         console.log(target);
+    }
+
+    var LightenDarkenColor = function(col, amt) {
+
+        var usePound = false;
+
+        if (col[0] == "#") {
+            col = col.slice(1);
+            usePound = true;
+        }
+
+        var num = parseInt(col, 16);
+
+        var r = (num >> 16) + amt;
+
+        if (r > 255) r = 255;
+        else if (r < 0) r = 0;
+
+        var b = ((num >> 8) & 0x00FF) + amt;
+
+        if (b > 255) b = 255;
+        else if (b < 0) b = 0;
+
+        var g = (num & 0x0000FF) + amt;
+
+        if (g > 255) g = 255;
+        else if (g < 0) g = 0;
+
+        return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
+
+    }
+
+    var toggleClass = function(el, className) {
+        if (el.classList) {
+            el.classList.toggle(className);
+        } else {
+            var classes = el.className.split(' ');
+            var existingIndex = classes.indexOf(className);
+
+            if (existingIndex >= 0)
+                classes.splice(existingIndex, 1);
+            else
+                classes.push(className);
+
+            el.className = classes.join(' ');
+        }
+
     }
 
     var unitKey = [

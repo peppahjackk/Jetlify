@@ -2,9 +2,29 @@
 	background-color: #29C455;
 	color: #ffffff;
 	padding: 10px;
-    font-size: 24px;
-    line-height: 27px;
     border-radius: 2px;
+    text-align: center;
+    transition: background-color .2s;
+	-webkit-transition: background-color .2s;
+}
+
+.price-perlify p {
+	margin-bottom: 0;	
+}
+
+.price-value {
+	font-size: 24px;
+	line-height: 27px;
+}
+
+.green {
+	background-color: #29C455;
+	color: #ffffff;
+}
+
+.pending {
+	background-color: #333;
+	color: #ffffff;
 }
 
 .product-tiles .tile-pricing-block {
