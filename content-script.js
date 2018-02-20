@@ -67,14 +67,10 @@ var initJetlify = function() {
                         appendErr(prod, err);
                     }
                 }
-
+                var today = new Date();
                 var pricePerlifyList = document.getElementsByClassName('price-perlify');
-                for (prod of pricePerlifyList) {
-                    console.log(prod.className);
-                    toggleClass(prod, 'pending');
-                    toggleClass(prod, 'green');
-                }
 
+                styleNodes(pricePerlifyList, ['pending', 'green']);
             }, 500);
         }
 
@@ -147,9 +143,7 @@ var initJetlify = function() {
     var calculatePerItem = function(title, price, unit) {
         var quantities = title.match(/[0-9.]+/g);
 
-
         return quantities.length === 1 ? Number.parseFloat(price[0] / quantities[0]).toFixed(4) : Number.parseFloat(price[0] / getClosestQuantity(quantities, title, unit)).toFixed(4);
-
     };
 
     var getClosestQuantity = function(quantities, title, unit) {
@@ -196,6 +190,18 @@ var initJetlify = function() {
         target.getElementsByClassName('tile-pricing-block')[0].appendChild(msgEl);
 
         console.log(target);
+    }
+
+    function styleNodes(nodeList, ...styles) {
+        for (elem of nodeList) {
+            if (styles.length === 0) {
+                return false; // break
+            }
+
+            for (style in styles[0]) {
+                toggleClass(elem, styles[0][style]);
+            }
+        };
     }
 
     var LightenDarkenColor = function(col, amt) {
