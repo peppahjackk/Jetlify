@@ -10,7 +10,7 @@ var initJetlify = function() {
             clearInterval(readContent);
             // Gives another beat for the dynamic content to load
             window.setTimeout(function() {
-                setupEventHandlers();
+                setItemListeners();
                 // Gets all pre-listed price per blocks
                 var pricePerList = document.getElementsByClassName('price-per');
 
@@ -253,26 +253,38 @@ var initJetlify = function() {
 
     }
 
+    var setItemListeners = function() {
+        var insertedNodes = [];
+        var prodListContainer = document.getElementsByClassName('module-products')[0];
+
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                for (var i = 0; i < mutation.addedNodes.length; i++)
+                    insertedNodes.push(mutation.addedNodes[i]);
+            })
+            window.setTimeout(function() {
+                refreshPrices();
+            }, 100);
+        });
+        observer.observe(prodListContainer, { childList: true });
+    }
+
     var refreshPrices = function() {
-        console.log('refreshing');
+        deletePerlifyNodes();
         initJetlify();
     }
 
-    var setupEventHandlers = function() {
-        console.log('setting up handlers');
-        // setRefreshHandlers(document.getElementsByClassName('add'));
-        // setRefreshHandlers(document.getElementsByClassName('quantity_change'));
-    }
+    var deletePerlifyNodes = function() {
+        var perlifyNodes = document.getElementsByClassName('price-perlify');
+        console.log(perlifyNodes);
 
-    var setRefreshHandlers = function(elemList) {
-        for (button of elemList) {
+        Array.prototype.forEach.call(perlifyNodes, function(node) {
+            console.log('current node' + node);
+            node.parentNode.removeChild(node);
+        });
 
-            button.addEventListener('click',function() {
-                window.setTimeout(function() {
-                    console.log('setting refresh')
-                    refreshPrices();
-                }, 5000);
-            });
+        for (node of perlifyNodes) {
+            console.log('current node' + node);
         }
     }
 
