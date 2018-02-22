@@ -31,6 +31,10 @@
 	color: #ffffff;
 }
 
+.error {
+	background-color: rgba(0,0,0,.35);
+}
+
 .product-tiles .tile-pricing-block {
 	height: 100px !important;
 }

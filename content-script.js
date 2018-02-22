@@ -53,6 +53,8 @@ var initJetlify = function() {
                             finalPer = calculatePerItem(title, pricingBlock, itemUnit.inTitle);
                         }
 
+                        deleteOldPerlify(prod);
+
                         if (finalPer) {
                             if (!hasPerUnit) {
                                 appendPer(prod, finalPer, itemUnit.inTitle, onSale);
@@ -61,7 +63,7 @@ var initJetlify = function() {
                             }
                         } else {
                             console.log('No price per found');
-                            appendErr(prod, err);
+                            appendErr(prod, err, onSale);
                         }
                     } catch (err) {
                         console.log('Error: ' + err);
@@ -187,10 +189,15 @@ var initJetlify = function() {
         product.appendChild(priceNodeContainer);
     }
 
-    var appendErr = function(target, err) {
-        var msg = document.createTextNode('Unsure.');
-        var msgEl = document.createElement('p').appendChild(msg);
-        target.getElementsByClassName('tile-pricing-block')[0].appendChild(msgEl);
+    var appendErr = function(target, err, onSale) {
+        var errNodeContainer = document.createElement('div');
+        var errNode = document.createElement('p');
+        errNodeContainer.appendChild(errNode);
+        errNodeContainer.className += 'price-perlify error';
+
+        errNode.innerHTML = "Unsure.";
+
+        target.getElementsByClassName('tile-pricing-block')[0].appendChild(errNodeContainer);
 
         console.log(target);
     }
@@ -264,28 +271,21 @@ var initJetlify = function() {
             })
             window.setTimeout(function() {
                 refreshPrices();
-            }, 100);
+            }, 1000);
         });
         observer.observe(prodListContainer, { childList: true });
     }
 
     var refreshPrices = function() {
-        deletePerlifyNodes();
         initJetlify();
     }
 
-    var deletePerlifyNodes = function() {
-        var perlifyNodes = document.getElementsByClassName('price-perlify');
-        console.log(perlifyNodes);
+    var deleteOldPerlify = function(productNode) {
+        var perlifyNodes = productNode.getElementsByClassName('price-perlify');
 
         Array.prototype.forEach.call(perlifyNodes, function(node) {
-            console.log('current node' + node);
             node.parentNode.removeChild(node);
         });
-
-        for (node of perlifyNodes) {
-            console.log('current node' + node);
-        }
     }
 
     var unitKey = [
