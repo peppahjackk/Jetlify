@@ -1,6 +1,9 @@
 var initJetlify = function() {
     var loadCheck = 0,
-        unitList,
+        unitList = [],
+        priceList = [],
+        medianPrice,
+        avgPrice,
         units;
 
     var readContent = setInterval(function() {
@@ -15,7 +18,9 @@ var initJetlify = function() {
                 var pricePerList = document.getElementsByClassName('price-per');
 
                 // Gets pre-listed units
-                units = getExistingUnits(pricePerList, false);
+                units = getExistingUnits(pricePerList);
+
+                medianPrice = getMedian(priceList);
 
                 var prodList = document.getElementsByClassName('list-products')[0].children;
 
@@ -25,7 +30,7 @@ var initJetlify = function() {
                         var title = content[0].childNodes[0].getElementsByClassName('name')[0].textContent.toLowerCase();
                         var pricingBlock = content[0].childNodes[1];
                         var onSale = false;
-                        var itemUnit
+                        var itemUnit;
                         var finalPer = false;
                         var hasPerUnit = false;
 
@@ -41,8 +46,8 @@ var initJetlify = function() {
                         }
 
                         if (typeof pricePer[0] != 'undefined') {
-                            pricingBlock = [price, pricePer[0].innerHTML];
-                            pricePer = getExistingUnits(pricePer, true);
+                            pricingBlock = [price, getPrice(pricePer[0])];
+                            pricePer = getUnit(pricePer[0]);
                             hasPerUnit = true;
                         } else {
                             pricingBlock = [price];
@@ -63,10 +68,10 @@ var initJetlify = function() {
                             }
                         } else {
                             console.log('No price per found');
-                            appendErr(prod, err, onSale);
+                            appendErr(prod, onSale);
                         }
                     } catch (err) {
-                        console.log('Error: ' + err);
+                        console.error(err);
                         appendErr(prod, err);
                     }
                 }
@@ -89,29 +94,58 @@ var initJetlify = function() {
 
     }, 500)
 
-    var getExistingUnits = function(list, singleProduct) {
+    var getExistingUnits = function(list) {
+        var existingUnits = [];
 
-        if (!singleProduct) {
-            for (pricePerItem of list) {
-                var pricePer = pricePerItem.innerHTML.replace(/[\(\)]/g, '').split('/');
-                var unit = pricePer[1].toLowerCase();
+        for (pricePerItem of list) {
+            var unit = getUnit(pricePerItem);
+            var price = parseFloat(getPrice(pricePerItem));
 
-                if (unitList === undefined) {
-                    unitList = [unit];
-                } else if (unitList.indexOf(unit) == -1) {
-                    unitList.push(unit);
-                }
+            if (existingUnits.indexOf(unit) == -1) {
+                existingUnits.push(unit);
             }
 
-            return unitList;
-        } else {
-            var pricePer = list[0].innerHTML.replace(/[\(\)]/g, '').split('/');
-            var unit = pricePer[1].toLowerCase();
-
-            return unit;
+            priceList.push(price);
         }
 
+        return existingUnits;
     };
+
+    var getUnit = function(item) {
+        var pricePer = item.innerHTML.replace(/[\(\)]/g, '').split('/');
+        var unit = pricePer[1].toLowerCase();
+
+        return unit;
+    };
+
+    var getPrice = function(item) {
+        var itemPrice = item.innerHTML.replace(/[\(\)]/g, '').split('/');
+        return itemPrice[0].substr(2);
+    };
+
+    var getAverage = function(list) {
+        return list.reduce(function(a, b) {
+            return a + b
+        }) / list.length;
+    };
+
+    var getMedian = function(numbers) {
+        var median = 0,
+            numsLen = numbers.length;
+        numbers.sort();
+
+        if (
+            numsLen % 2 === 0 // is even
+        ) {
+            // average of two middle numbers
+            median = (numbers[numsLen / 2 - 1] + numbers[numsLen / 2]) / 2;
+        } else { // is odd
+            // middle number only
+            median = numbers[(numsLen - 1) / 2];
+        }
+
+        return median;
+    }
 
     var findUnit = function(title, price, unitList) {
         var unitPer;
@@ -148,11 +182,48 @@ var initJetlify = function() {
     var calculatePerItem = function(title, price, unit) {
         var quantities = title.match(/[0-9.]+/g);
 
-        return quantities.length === 1 ? Number.parseFloat(price[0] / quantities[0]).toFixed(4) : Number.parseFloat(price[0] / getClosestQuantity(quantities, title, unit)).toFixed(4);
+        return quantities.length === 1 ?
+            Number.parseFloat(price[0] / quantities[0]).toFixed(4) :
+            assertMultipleQuantities(title, price, unit, quantities);
     };
 
+    var assertMultipleQuantities = function(title, price, unit, quantities) {
+
+        var closestQuantity = getClosestQuantity(quantities, title, unit);
+        var newPricePer = Number.parseFloat(price[0] / closestQuantity).toFixed(4);
+
+        if (price[1] == null) {
+            price[1] = medianPrice;
+        }
+            console.log('has price per: ' + (price[1]) + '. With got: ' + newPricePer + ' with ' + closestQuantity);
+            console.log(quantities, title, unit)
+            // If our price is significantly more than theirs or the median, try to multiply with next quantity
+            if (newPricePer > (price[1] * 1.2) && newPricePer >= (medianPrice * 1.2)) {
+                quantities = remove(quantities, closestQuantity);
+                // Iterate through other number values in title
+                while (quantities.length) {
+                    var tempPricePer = (newPricePer / quantities[quantities.length - 1]).toFixed(4);
+                    console.log('has price per: ' + (price[1]) + '. With got: ' + tempPricePer + ' with ' + quantities[quantities.length - 1]);
+                    if (tempPricePer <= price[1] * 1.2 || tempPricePer <= (medianPrice * 1.2)) { 
+                        console.log('Chosen')
+                        return tempPricePer; // Latest calculation is close to theirs/the median
+                    } else {
+                        quantities.pop();
+                    }
+                }
+                return newPricePer; // Return our first guess
+            } else {
+                return newPricePer; // Our first calculation was likely correct!
+            }
+        
+    }
+
+    var remove = function(array, el) {
+        return array.filter(e => e !== el);
+    }
+
     var getClosestQuantity = function(quantities, title, unit) {
-        var unitIndex = title.indexOf(unit);
+        var unitIndex = title.indexOf(unit); // Needs to make sure unit is flanked by word boundary or symbol
 
         var minDistance = title.length;
         var closestNum;
@@ -161,10 +232,12 @@ var initJetlify = function() {
             var numIndex = title.indexOf(num);
             var numDistance = unitIndex - numIndex;
 
+            console.log(num, numDistance);
             // If numOccurance is before unit set as closest If past, return previous num
             if (numDistance > 0) {
                 closestNum = num;
             } else if (numDistance < 0) {
+                console.log(closestNum);
                 return closestNum;
             }
         }
@@ -189,7 +262,7 @@ var initJetlify = function() {
         product.appendChild(priceNodeContainer);
     }
 
-    var appendErr = function(target, err, onSale) {
+    var appendErr = function(target, onSale) {
         var errNodeContainer = document.createElement('div');
         var errNode = document.createElement('p');
         errNodeContainer.appendChild(errNode);

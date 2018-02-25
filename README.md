@@ -5,18 +5,16 @@ A chrome extension that helps you save even more money on Jet.com by highlightin
 USD is currently the only currency supported.
 
 
-### To Do
+### To Do before release
 
-* Case where two units occur in title
-* Case where x packs of y quantities occurs
-```
-if (priceFound/otherPriceAvg > 2 && twoQuantitiesInTitle) {
-	try priceFound * secondQuanty then recurse
-} else if (priceFound/otherPriceAvg > 2 && oneQuantity) {
-	textNode = Unsure of PricePer
-}
-```
+* Mutation observer to start pulling data
 * Colorize lowest price per deals
-* Enable style transitions
-* Update on page change
 * Create logo
+* Implement animations
+* Test
+
+
+### Bugs
+
+* Sq ft on rolls of paper products impossible. Fall back to count
+* NaN getting appended occasionally (seen on coffee filters)
