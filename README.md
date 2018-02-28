@@ -8,7 +8,8 @@ USD is currently the only currency supported.
 ### To Do before release
 
 * Mutation observer to start pulling data
-* Colorize lowest price per deals
+* Style lowest price per deals
+* Unsupported item case
 * Create logo
 * Implement animations
 * Test
@@ -18,3 +19,5 @@ USD is currently the only currency supported.
 
 * Sq ft on rolls of paper products impossible. Fall back to count
 * NaN getting appended occasionally (seen on coffee filters)
+* Case where item is unavailable errors, stops code. need try/catch on append
+* If multi quantity case, the per unit always defaults to the original first, though two have been used ($4.80 24oz 2ct will result in $0.10/count) 

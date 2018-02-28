@@ -198,13 +198,13 @@ var initJetlify = function() {
             console.log('has price per: ' + (price[1]) + '. With got: ' + newPricePer + ' with ' + closestQuantity);
             console.log(quantities, title, unit)
             // If our price is significantly more than theirs or the median, try to multiply with next quantity
-            if (newPricePer > (price[1] * 1.2) && newPricePer >= (medianPrice * 1.2)) {
+            if (newPricePer > (price[1] * 1.7) && newPricePer >= (medianPrice * 1.7)) {
                 quantities = remove(quantities, closestQuantity);
                 // Iterate through other number values in title
                 while (quantities.length) {
                     var tempPricePer = (newPricePer / quantities[quantities.length - 1]).toFixed(4);
                     console.log('has price per: ' + (price[1]) + '. With got: ' + tempPricePer + ' with ' + quantities[quantities.length - 1]);
-                    if (tempPricePer <= price[1] * 1.2 || tempPricePer <= (medianPrice * 1.2)) { 
+                    if (tempPricePer <= price[1] * 1.3 || tempPricePer <= (medianPrice * 1.3)) { 
                         console.log('Chosen')
                         return tempPricePer; // Latest calculation is close to theirs/the median
                     } else {
@@ -223,8 +223,11 @@ var initJetlify = function() {
     }
 
     var getClosestQuantity = function(quantities, title, unit) {
-        var unitIndex = title.indexOf(unit); // Needs to make sure unit is flanked by word boundary or symbol
+        var unitSearch = '[\\W\\d](' + unit + ')';
+        var re = new RegExp(unitSearch);
+        var unitIndex = title.match(re).index; // Needs to make sure unit is flanked by word boundary or symbol
 
+        console.log(unitSearch, unitIndex);
         var minDistance = title.length;
         var closestNum;
 
