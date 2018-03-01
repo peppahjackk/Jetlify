@@ -253,6 +253,10 @@ var initJetlify = function() {
         priceNodeContainer.appendChild(priceNode);
         priceNodeContainer.className += 'price-perlify pending';
 
+        var rankNode = buildRankNode('?'); 
+
+        priceNodeContainer.appendChild(rankNode);
+
 
         priceNode.innerHTML = '<span class="price-value">$' + finalPer + '</span>/' + unit;
 
@@ -271,11 +275,45 @@ var initJetlify = function() {
         errNodeContainer.appendChild(errNode);
         errNodeContainer.className += 'price-perlify error';
 
-        errNode.innerHTML = "Unsure.";
+        var rankNode = buildRankNode('?');
+
+        errNodeContainer.appendChild(rankNode);
+
+        errNode.innerHTML = "Jetlify unsure.";
 
         target.getElementsByClassName('tile-pricing-block')[0].appendChild(errNodeContainer);
 
         console.log(target);
+    }
+
+    var buildRankNode = function(rankNum) {
+        var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("viewBox","0 0 120 100");
+        svg.setAttribute("preserveAspectRatio", "none");
+        svg.setAttribute("height","100%");
+
+        var poly = document.createElementNS("http://www.w3.org/2000/svg","polygon");
+        poly.setAttribute("points","0,120 20,0 120,0 120,100");
+
+        var circle = document.createElementNS("http://www.w3.org/2000/svg","circle");
+        circle.setAttribute("cx","56%");
+        circle.setAttribute("cy","51.5%");
+        circle.setAttribute("r","37%");
+        circle.setAttribute("fill","white");
+
+        var rank = document.createElementNS("http://www.w3.org/2000/svg","text");
+        rank.setAttribute("x","55%");
+        rank.setAttribute("y","69%");
+        rank.setAttribute("text-anchor","middle");
+        rank.setAttribute("font-size","52");
+        rank.innerHTML = rankNum;
+
+
+        svg.appendChild(poly);
+        svg.appendChild(circle);
+        svg.appendChild(rank);
+
+        return svg;
     }
 
     function styleNodes(nodeList, ...styles) {

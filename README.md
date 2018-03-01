@@ -8,7 +8,7 @@ USD is currently the only currency supported.
 ### To Do before release
 
 * Mutation observer to start pulling data
-* Style lowest price per deals
+* Rank item price vs the rest and colorize
 * Unsupported item case
 * Create logo
 * Implement animations
