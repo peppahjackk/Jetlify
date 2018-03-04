@@ -11,77 +11,75 @@ var initJetlify = function() {
         // Waits until page is loaded
         if (document.readyState === 'complete') {
             clearInterval(readContent);
-            // Gives another beat for the dynamic content to load
-            window.setTimeout(function() {
-                setItemListeners();
-                // Gets all pre-listed price per blocks
-                var pricePerList = document.getElementsByClassName('price-per');
 
-                // Gets pre-listed units
-                units = getExistingUnits(pricePerList);
+            // Sets up watcher for content change
+            setItemListeners();
+            
+            // Gets all pre-listed price per blocks
+            var pricePerList = document.getElementsByClassName('price-per');
+            // Gets pre-listed units
+            units = getExistingUnits(pricePerList);
 
-                medianPrice = getMedian(priceList);
+            medianPrice = getMedian(priceList);
 
-                var prodList = document.getElementsByClassName('list-products')[0].children;
+            var prodList = document.getElementsByClassName('list-products')[0].children;
 
-                for (prod of prodList) {
-                    try {
-                        var content = (prod.getElementsByClassName('tile-contents'));
-                        var title = content[0].childNodes[0].getElementsByClassName('name')[0].textContent.toLowerCase();
-                        var pricingBlock = content[0].childNodes[1];
-                        var onSale = false;
-                        var itemUnit;
-                        var finalPer = false;
-                        var hasPerUnit = false;
+            for (prod of prodList) {
+                try {
+                    var content = (prod.getElementsByClassName('tile-contents'));
+                    var title = content[0].childNodes[0].getElementsByClassName('name')[0].textContent.toLowerCase();
+                    var pricingBlock = content[0].childNodes[1];
+                    var onSale = false;
+                    var itemUnit;
+                    var finalPer = false;
+                    var hasPerUnit = false;
 
-                        var pricePer = prod.getElementsByClassName('price-per');
+                    var pricePer = prod.getElementsByClassName('price-per');
 
-                        var price = pricingBlock.getAttribute('data-price');
+                    var price = pricingBlock.getAttribute('data-price');
 
-                        if (prod.getElementsByClassName('price-now').length) {
-                            price = prod.getElementsByClassName('price-now')[0].textContent;
+                    if (prod.getElementsByClassName('price-now').length) {
+                        price = prod.getElementsByClassName('price-now')[0].textContent;
 
-                            onSale = true;
-                            price = price.replace(/[$,]+/g, "");
-                        }
-
-                        if (typeof pricePer[0] != 'undefined') {
-                            pricingBlock = [price, getPrice(pricePer[0])];
-                            pricePer = getUnit(pricePer[0]);
-                            hasPerUnit = true;
-                        } else {
-                            pricingBlock = [price];
-                        }
-
-                        var itemUnit = findUnit(title, pricingBlock, units);
-                        if (itemUnit) {
-                            finalPer = calculatePerItem(title, pricingBlock, itemUnit.inTitle);
-                        }
-
-                        deleteOldPerlify(prod);
-
-                        if (finalPer) {
-                            if (!hasPerUnit) {
-                                appendPer(prod, finalPer, itemUnit.inTitle, onSale);
-                            } else {
-                                appendPer(prod, finalPer, pricePer, onSale);
-                            }
-                        } else {
-                            console.log('No price per found');
-                            appendErr(prod, onSale);
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        appendErr(prod, err);
+                        onSale = true;
+                        price = price.replace(/[$,]+/g, "");
                     }
+
+                    if (typeof pricePer[0] != 'undefined') {
+                        pricingBlock = [price, getPrice(pricePer[0])];
+                        pricePer = getUnit(pricePer[0]);
+                        hasPerUnit = true;
+                    } else {
+                        pricingBlock = [price];
+                    }
+
+                    var itemUnit = findUnit(title, pricingBlock, units);
+                    if (itemUnit) {
+                        finalPer = calculatePerItem(title, pricingBlock, itemUnit.inTitle);
+                    }
+
+                    deleteOldPerlify(prod);
+
+                    if (finalPer) {
+                        if (!hasPerUnit) {
+                            appendPer(prod, finalPer, itemUnit.inTitle, onSale);
+                        } else {
+                            appendPer(prod, finalPer, pricePer, onSale);
+                        }
+                    } else {
+                        console.log('No price per found');
+                        appendErr(prod, onSale);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    appendErr(prod, err);
                 }
-                var today = new Date();
-                var pricePerlifyList = document.getElementsByClassName('price-perlify');
+            }
+            var today = new Date();
+            var pricePerlifyList = document.getElementsByClassName('price-perlify');
 
-                styleNodes(pricePerlifyList, ['pending', 'green']);
+            styleNodes(pricePerlifyList, ['pending', 'green']);
 
-
-            }, 500);
         }
 
         loadCheck++;
@@ -195,27 +193,27 @@ var initJetlify = function() {
         if (price[1] == null) {
             price[1] = medianPrice;
         }
-            console.log('has price per: ' + (price[1]) + '. With got: ' + newPricePer + ' with ' + closestQuantity);
-            console.log(quantities, title, unit)
-            // If our price is significantly more than theirs or the median, try to multiply with next quantity
-            if (newPricePer > (price[1] * 1.7) && newPricePer >= (medianPrice * 1.7)) {
-                quantities = remove(quantities, closestQuantity);
-                // Iterate through other number values in title
-                while (quantities.length) {
-                    var tempPricePer = (newPricePer / quantities[quantities.length - 1]).toFixed(4);
-                    console.log('has price per: ' + (price[1]) + '. With got: ' + tempPricePer + ' with ' + quantities[quantities.length - 1]);
-                    if (tempPricePer <= price[1] * 1.3 || tempPricePer <= (medianPrice * 1.3)) { 
-                        console.log('Chosen')
-                        return tempPricePer; // Latest calculation is close to theirs/the median
-                    } else {
-                        quantities.pop();
-                    }
+        console.log('has price per: ' + (price[1]) + '. With got: ' + newPricePer + ' with ' + closestQuantity);
+        console.log(quantities, title, unit)
+        // If our price is significantly more than theirs or the median, try to multiply with next quantity
+        if (newPricePer > (price[1] * 1.7) && newPricePer >= (medianPrice * 1.7)) {
+            quantities = remove(quantities, closestQuantity);
+            // Iterate through other number values in title
+            while (quantities.length) {
+                var tempPricePer = (newPricePer / quantities[quantities.length - 1]).toFixed(4);
+                console.log('has price per: ' + (price[1]) + '. With got: ' + tempPricePer + ' with ' + quantities[quantities.length - 1]);
+                if (tempPricePer <= price[1] * 1.3 || tempPricePer <= (medianPrice * 1.3)) {
+                    console.log('Chosen')
+                    return tempPricePer; // Latest calculation is close to theirs/the median
+                } else {
+                    quantities.pop();
                 }
-                return newPricePer; // Return our first guess
-            } else {
-                return newPricePer; // Our first calculation was likely correct!
             }
-        
+            return newPricePer; // Return our first guess
+        } else {
+            return newPricePer; // Our first calculation was likely correct!
+        }
+
     }
 
     var remove = function(array, el) {
@@ -253,7 +251,7 @@ var initJetlify = function() {
         priceNodeContainer.appendChild(priceNode);
         priceNodeContainer.className += 'price-perlify pending';
 
-        var rankNode = buildRankNode('?'); 
+        var rankNode = buildRankNode('?');
 
         priceNodeContainer.appendChild(rankNode);
 
@@ -288,24 +286,24 @@ var initJetlify = function() {
 
     var buildRankNode = function(rankNum) {
         var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svg.setAttribute("viewBox","0 0 120 100");
+        svg.setAttribute("viewBox", "0 0 120 100");
         svg.setAttribute("preserveAspectRatio", "none");
-        svg.setAttribute("height","100%");
+        svg.setAttribute("height", "100%");
 
-        var poly = document.createElementNS("http://www.w3.org/2000/svg","polygon");
-        poly.setAttribute("points","0,120 20,0 120,0 120,100");
+        var poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        poly.setAttribute("points", "0,120 20,0 120,0 120,100");
 
-        var circle = document.createElementNS("http://www.w3.org/2000/svg","circle");
-        circle.setAttribute("cx","56%");
-        circle.setAttribute("cy","51.5%");
-        circle.setAttribute("r","37%");
-        circle.setAttribute("fill","white");
+        var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", "56%");
+        circle.setAttribute("cy", "51.5%");
+        circle.setAttribute("r", "37%");
+        circle.setAttribute("fill", "white");
 
-        var rank = document.createElementNS("http://www.w3.org/2000/svg","text");
-        rank.setAttribute("x","55%");
-        rank.setAttribute("y","69%");
-        rank.setAttribute("text-anchor","middle");
-        rank.setAttribute("font-size","52");
+        var rank = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        rank.setAttribute("x", "55%");
+        rank.setAttribute("y", "69%");
+        rank.setAttribute("text-anchor", "middle");
+        rank.setAttribute("font-size", "52");
         rank.innerHTML = rankNum;
 
 
