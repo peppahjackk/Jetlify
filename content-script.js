@@ -1,7 +1,8 @@
 var initJetlify = function() {
     var loadCheck = 0,
         unitList = [],
-        priceList = [],
+        jetPriceList = [],
+        ourPriceList = [],
         medianPrice,
         avgPrice,
         units;
@@ -14,13 +15,13 @@ var initJetlify = function() {
 
             // Sets up watcher for content change
             setItemListeners();
-            
+
             // Gets all pre-listed price per blocks
             var pricePerList = document.getElementsByClassName('price-per');
             // Gets pre-listed units
             units = getExistingUnits(pricePerList);
 
-            medianPrice = getMedian(priceList);
+            medianPrice = getMedian(jetPriceList);
 
             var prodList = document.getElementsByClassName('list-products')[0].children;
 
@@ -61,6 +62,7 @@ var initJetlify = function() {
                     deleteOldPerlify(prod);
 
                     if (finalPer) {
+                        ourPriceList.push(finalPer);
                         if (!hasPerUnit) {
                             appendPer(prod, finalPer, itemUnit.inTitle, onSale);
                         } else {
@@ -75,11 +77,11 @@ var initJetlify = function() {
                     appendErr(prod, err);
                 }
             }
-            var today = new Date();
+
             var pricePerlifyList = document.getElementsByClassName('price-perlify');
 
-            styleNodes(pricePerlifyList, ['pending', 'green']);
-
+            //styleNodes(pricePerlifyList, ['pending']);
+            rankPrices(pricePerlifyList);
         }
 
         loadCheck++;
@@ -103,7 +105,7 @@ var initJetlify = function() {
                 existingUnits.push(unit);
             }
 
-            priceList.push(price);
+            jetPriceList.push(price);
         }
 
         return existingUnits;
@@ -254,6 +256,7 @@ var initJetlify = function() {
         var rankNode = buildRankNode('?');
 
         priceNodeContainer.appendChild(rankNode);
+        priceNodeContainer.setAttribute('data-price-per', finalPer);
 
 
         priceNode.innerHTML = '<span class="price-value">$' + finalPer + '</span>/' + unit;
@@ -314,10 +317,17 @@ var initJetlify = function() {
         return svg;
     }
 
+    function rankPrices(nodeList) {
+        var rankedList = [].slice.call(nodeList);
+        rankedList = rankedList.sort(compare);
+
+        
+    }
+
     function styleNodes(nodeList, ...styles) {
         for (elem of nodeList) {
             if (styles.length === 0) {
-                return false; // break
+                return false;
             }
 
             for (style in styles[0]) {
@@ -398,6 +408,14 @@ var initJetlify = function() {
         Array.prototype.forEach.call(perlifyNodes, function(node) {
             node.parentNode.removeChild(node);
         });
+    }
+
+    var compare = function(a, b) {
+        if (a.dataset.pricePer > b.dataset.pricePer) {
+            return 1;
+        } else if (a.dataset.pricePer < b.dataset.pricePer) {
+            return -1;
+        }
     }
 
     var unitKey = [
