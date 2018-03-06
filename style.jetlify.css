@@ -24,6 +24,7 @@
 
 .price-perlify svg text {
 	font-weight: 700;
+	fill: #333;
 }
 
 .price-value {
@@ -41,34 +42,42 @@
 
 .green-1 {
 	border-color: #009122;
+	fill: #009122;
 }
 
 .green-2 {
 	border-color: #29C455;
+	fill: #29C455;
 }
 
 .green-3 {
 	border-color: #5CF788;
+	fill: #5CF788;
 }
 
 .yellow-1 {
-	border-color: #FFFF51: 
+	border-color: #FFFF51;
+	fill: #FFFF51; 
 }
 
 .yellow-2 {
 	border-color: #FFFF83;
+	fill: #FFFF83;
 }
 
 .red-1 {
 	border-color: #B80C09;
+	fill: #B80C09;
 }
 
 .red-2 {
 	border-color: #EB3F3C;
+	fill: #EB3F3C;
 }
 
 .red-3 {
 	border-color: #FF726F;
+	fill: #FF726F;
 }
 
 .pending {

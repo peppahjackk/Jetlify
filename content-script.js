@@ -89,8 +89,7 @@ var initJetlify = function() {
             clearInterval(readContent);
             console.log('ERROR: Could not read content')
             return;
-        }
-
+        };
 
     }, 500)
 
@@ -321,7 +320,49 @@ var initJetlify = function() {
         var rankedList = [].slice.call(nodeList);
         rankedList = rankedList.sort(compare);
 
-        
+        var priceAvg = getAverage(rankedList);
+        var priceTier = 1;
+        var indexInTier = 0;
+
+        var tierLength = Math.round(rankedList.length / 8);
+        console.log(rankedList.length, tierLength);
+        for (var i = 1; i <= rankedList.length; i++) {
+            switch (priceTier) {
+                case 1:
+                    var tierClass = "green-1";
+                    break;
+                case 2:
+                    var tierClass = "green-2";
+                    break;
+                case 3:
+                    var tierClass = "green-3";
+                    break;
+                case 4:
+                    var tierClass = "yellow-1";
+                    break;
+                case 5:
+                    var tierClass = "yellow-1";
+                    break;
+                case 6:
+                    var tierClass = "red-3";
+                    break;
+                case 7:
+                    var tierClass = "red-2";
+                    break;
+                case 8:
+                    var tierClass = "red-1";
+                    break;
+                default:
+                    var tierClass = "error";
+            }
+            console.log(i);
+            toggleClass(rankedList[i - 1], tierClass, 'pending');
+            indexInTier++;
+            if (indexInTier >= tierLength) {
+                priceTier++;
+                indexInTier = 0;
+            }
+        }
     }
 
     function styleNodes(nodeList, ...styles) {
@@ -336,20 +377,24 @@ var initJetlify = function() {
         };
     }
 
-    var toggleClass = function(el, className) {
-        if (el.classList) {
-            el.classList.toggle(className);
-        } else {
-            var classes = el.className.split(' ');
-            var existingIndex = classes.indexOf(className);
+    var toggleClass = function(el, ...className) {
+        console.log(className);
+        for (style in className) {
+            if (el.classList) {
+                el.classList.toggle(className[style]);
+            } else {
+                var classes = el.className.split(' ');
+                var existingIndex = classes.indexOf(className[style]);
 
-            if (existingIndex >= 0)
-                classes.splice(existingIndex, 1);
-            else
-                classes.push(className);
+                if (existingIndex >= 0)
+                    classes.splice(existingIndex, 1);
+                else
+                    classes.push(className[style]);
 
-            el.className = classes.join(' ');
+                el.className = classes.join(' ');
+            }
         }
+
     }
 
     var LightenDarkenColor = function(col, amt) {
