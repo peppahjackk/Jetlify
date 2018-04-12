@@ -1,102 +1,126 @@
 .price-perlify {
-	position: relative;
-	padding: 10px 0 10px 10px;
-	margin-top: 5px;
-	overflow: hidden;
-	background-color: #fff;
-	color: #000;
-	border: 3px solid #29C455;
+    position: relative;
+    padding: 10px 0 10px 10px;
+    margin-top: 5px;
+    overflow: hidden;
+    background-color: #fff;
+    color: #000;
+    border: 3px solid #29C455;
     border-radius: 2px;
     transition: background-color .2s;
-	-webkit-transition: background-color .2s;
+    -webkit-transition: background-color .2s;
 }
 
 .price-perlify p {
-	margin-bottom: 0;	
-	font-size: 14px;
+    margin-bottom: 0;
+    font-size: 14px;
 }
 
 .price-perlify svg {
-	position: absolute;
-	top: 0;
-	right: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 .price-perlify svg text {
-	font-weight: 700;
-	fill: #333;
+    font-weight: 700;
+    fill: #333;
 }
 
 .price-value {
-	font-size: 24px;
-	line-height: 27px;
+    font-size: 24px;
+    line-height: 27px;
 }
 
-.green {
-	border-color: #29C455;
-}
 
-.green svg polygon {
+
+/*.green svg polygon {
 	fill: #29C455;
-}
+}*/
 
-.green-1 {
-	border-color: #009122;
-	fill: #009122;
-}
 
-.green-2 {
-	border-color: #29C455;
-	fill: #29C455;
-}
-
-.green-3 {
+/*.green {
 	border-color: #5CF788;
-	fill: #5CF788;
+}*/
+
+.green.three {
+    border-color: #64b079;
 }
 
-.yellow-1 {
-	border-color: #FFFF51;
-	fill: #FFFF51; 
+.green.three svg polygon {
+    fill: #64b079;
 }
 
-.yellow-2 {
-	border-color: #FFFF83;
-	fill: #FFFF83;
+.green.two {
+    border-color: #63d583;
 }
 
-.red-1 {
-	border-color: #B80C09;
-	fill: #B80C09;
+.green.two svg polygon {
+    fill: #63d583;
 }
 
-.red-2 {
+.green.one {
+    border-color: #5CF788;
+}
+
+.green.one svg polygon {
+    fill: #5CF788;
+}
+
+.neutral {
+    border-color: #777;
+}
+
+.neutral svg polygon {
+    fill: #777;
+}
+
+/*.red {
+    border-color: #B80C09;
+}
+*/
+.red.three {
+    border-color: #B80C09;
+}
+
+.red.three svg polygon {
+    fill: #B80C09;
+}
+
+.red.two {
 	border-color: #EB3F3C;
-	fill: #EB3F3C;
 }
 
-.red-3 {
+.red.two svg polygon {
+    fill: #EB3F3C;
+}
+
+.red.one {
 	border-color: #FF726F;
-	fill: #FF726F;
+}
+
+.red.one svg polygon {
+    fill: #FF726F;
 }
 
 .pending {
-	border-color: #333;
-	border-width: 1px;
-	color: #000;
+    border-color: #333;
+    border-width: 1px;
+    color: #000;
 }
 
 .error {
-	border-color: rgba(0,0,0,.35);
-	color: rgba(0,0,0,.65);
-	margin: 10px auto;
-	width: 60%;
+    border-color: rgba(0, 0, 0, .35);
+    color: rgba(0, 0, 0, .65);
+    margin: 10px auto;
+    width: 60%;
 }
 
-.error svg polygon, .error svg text {
-	fill: rgba(0,0,0,.35);
+.error svg polygon,
+.error svg text {
+    fill: rgba(0, 0, 0, .35);
 }
 
 .product-tiles .tile-pricing-block {
-	height: 100px !important;
+    height: 100px !important;
 }

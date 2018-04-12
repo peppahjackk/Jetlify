@@ -327,36 +327,44 @@ var initJetlify = function() {
         var tierLength = Math.round(rankedList.length / 8);
         console.log(rankedList.length, tierLength);
         for (var i = 1; i <= rankedList.length; i++) {
+            let tierNum;
+            let tierColor;
             switch (priceTier) {
                 case 1:
-                    var tierClass = "green-1";
+                    tierColor = "green";
+                    tierNum = "one";
                     break;
                 case 2:
-                    var tierClass = "green-2";
+                    tierColor = "green";
+                    tierNum = "two";
                     break;
                 case 3:
-                    var tierClass = "green-3";
+                    tierColor = "green";
+                    tierNum = "three";
                     break;
                 case 4:
-                    var tierClass = "yellow-1";
+                    tierColor = "neutral";
                     break;
                 case 5:
-                    var tierClass = "yellow-1";
+                    tierColor = "neutral";
                     break;
                 case 6:
-                    var tierClass = "red-3";
+                    tierColor = "red";
+                    tierNum = "one";
                     break;
                 case 7:
-                    var tierClass = "red-2";
+                    tierColor = "red";
+                    tierNum = "two";
                     break;
                 case 8:
-                    var tierClass = "red-1";
+                    tierColor = "red";
+                    tierNum = "three";
                     break;
                 default:
-                    var tierClass = "error";
+                    tierNum = "error";
             }
             console.log(i);
-            toggleClass(rankedList[i - 1], tierClass, 'pending');
+            toggleClass(rankedList[i - 1], tierNum, tierColor, 'pending');
             indexInTier++;
             if (indexInTier >= tierLength) {
                 priceTier++;
@@ -380,6 +388,9 @@ var initJetlify = function() {
     var toggleClass = function(el, ...className) {
         console.log(className);
         for (style in className) {
+            if (!style) {
+                break;
+            }
             if (el.classList) {
                 el.classList.toggle(className[style]);
             } else {
