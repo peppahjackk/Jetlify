@@ -194,17 +194,14 @@ var initJetlify = function() {
         if (price[1] == null) {
             price[1] = medianPrice;
         }
-        console.log('has price per: ' + (price[1]) + '. With got: ' + newPricePer + ' with ' + closestQuantity);
-        console.log(quantities, title, unit)
+
         // If our price is significantly more than theirs or the median, try to multiply with next quantity
         if (newPricePer > (price[1] * 1.7) && newPricePer >= (medianPrice * 1.7)) {
             quantities = remove(quantities, closestQuantity);
             // Iterate through other number values in title
             while (quantities.length) {
                 var tempPricePer = (newPricePer / quantities[quantities.length - 1]).toFixed(4);
-                console.log('has price per: ' + (price[1]) + '. With got: ' + tempPricePer + ' with ' + quantities[quantities.length - 1]);
                 if (tempPricePer <= price[1] * 1.3 || tempPricePer <= (medianPrice * 1.3)) {
-                    console.log('Chosen')
                     return tempPricePer; // Latest calculation is close to theirs/the median
                 } else {
                     quantities.pop();
@@ -226,7 +223,6 @@ var initJetlify = function() {
         var re = new RegExp(unitSearch);
         var unitIndex = title.match(re).index; // Needs to make sure unit is flanked by word boundary or symbol
 
-        console.log(unitSearch, unitIndex);
         var minDistance = title.length;
         var closestNum;
 
@@ -234,12 +230,10 @@ var initJetlify = function() {
             var numIndex = title.indexOf(num);
             var numDistance = unitIndex - numIndex;
 
-            console.log(num, numDistance);
             // If numOccurance is before unit set as closest If past, return previous num
             if (numDistance > 0) {
                 closestNum = num;
             } else if (numDistance < 0) {
-                console.log(closestNum);
                 return closestNum;
             }
         }
@@ -282,8 +276,6 @@ var initJetlify = function() {
         errNode.innerHTML = "Jetlify unsure.";
 
         target.getElementsByClassName('tile-pricing-block')[0].appendChild(errNodeContainer);
-
-        console.log(target);
     }
 
     var buildRankNode = function(rankNum) {
@@ -324,30 +316,47 @@ var initJetlify = function() {
         var priceTier = 1;
         var indexInTier = 0;
 
-        var tierLength = Math.round(rankedList.length / 8);
-        console.log(rankedList.length, tierLength);
+        var tierLength = Math.round(rankedList.length / 3);
+        console.log(tierLength + ' ' + rankedList.length)
         for (var i = 1; i <= rankedList.length; i++) {
-            let tierNum;
-            let tierColor;
+            let currentItem = rankedList[i - 1];
 
-            if (priceTier <= 3) {
-                tierColor = 'green';
-            } else if (priceTier > 3 && priceTier <= 5) {
-                tierColor = 'yellow';
-            } else if (priceTier > 5 && priceTier <= 8) {
-                tierColor = 'red';
-            } else {
-                tierColor = 'error';
-            }
+            colorizeRank(currentItem, priceTier);
+            rankNumber(currentItem, i);
 
-            console.log(i);
-            toggleClass(rankedList[i - 1], tierColor, 'pending');
             indexInTier++;
+
             if (indexInTier >= tierLength) {
                 priceTier++;
                 indexInTier = 0;
             }
         }
+    }
+
+    function colorizeRank(item, priceTier) {
+        let tierColor;
+
+        switch (priceTier) {
+            case 1:
+                tierColor = 'green';
+                break;
+            case 2:
+                tierColor = 'yellow';
+                break;
+            case 3:
+                tierColor = 'red';
+                break;
+            default:
+                tierColor = 'error';
+                break;
+        }
+        
+        toggleClass(item, tierColor, 'pending');
+    }
+
+    function rankNumber(item, priceRank) {
+
+        item.getElementsByTagName('text')[0].textContent = priceRank;
     }
 
     function styleNodes(nodeList, ...styles) {
@@ -363,7 +372,6 @@ var initJetlify = function() {
     }
 
     var toggleClass = function(el, ...className) {
-        console.log(className);
         for (style in className) {
             if (!style) {
                 break;
