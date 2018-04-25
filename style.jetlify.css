@@ -32,75 +32,28 @@
     line-height: 27px;
 }
 
-
-
-/*.green svg polygon {
-	fill: #29C455;
-}*/
-
-
-/*.green {
-	border-color: #5CF788;
-}*/
-
-.green.three {
-    border-color: #64b079;
+.green {
+    border-color: #42D16B;
 }
 
-.green.three svg polygon {
-    fill: #64b079;
+.green svg polygon {
+    fill: #42D16B;
 }
 
-.green.two {
-    border-color: #63d583;
+.yellow {
+    border-color: #F9C80E;
 }
 
-.green.two svg polygon {
-    fill: #63d583;
+.yellow svg polygon {
+    fill: #F9C80E;
 }
 
-.green.one {
-    border-color: #5CF788;
-}
-
-.green.one svg polygon {
-    fill: #5CF788;
-}
-
-.neutral {
-    border-color: #777;
-}
-
-.neutral svg polygon {
-    fill: #777;
-}
-
-/*.red {
-    border-color: #B80C09;
-}
-*/
-.red.three {
+.red {
     border-color: #B80C09;
 }
 
-.red.three svg polygon {
+.red svg polygon {
     fill: #B80C09;
-}
-
-.red.two {
-	border-color: #EB3F3C;
-}
-
-.red.two svg polygon {
-    fill: #EB3F3C;
-}
-
-.red.one {
-	border-color: #FF726F;
-}
-
-.red.one svg polygon {
-    fill: #FF726F;
 }
 
 .pending {

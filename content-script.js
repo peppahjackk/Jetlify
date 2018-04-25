@@ -329,42 +329,19 @@ var initJetlify = function() {
         for (var i = 1; i <= rankedList.length; i++) {
             let tierNum;
             let tierColor;
-            switch (priceTier) {
-                case 1:
-                    tierColor = "green";
-                    tierNum = "one";
-                    break;
-                case 2:
-                    tierColor = "green";
-                    tierNum = "two";
-                    break;
-                case 3:
-                    tierColor = "green";
-                    tierNum = "three";
-                    break;
-                case 4:
-                    tierColor = "neutral";
-                    break;
-                case 5:
-                    tierColor = "neutral";
-                    break;
-                case 6:
-                    tierColor = "red";
-                    tierNum = "one";
-                    break;
-                case 7:
-                    tierColor = "red";
-                    tierNum = "two";
-                    break;
-                case 8:
-                    tierColor = "red";
-                    tierNum = "three";
-                    break;
-                default:
-                    tierNum = "error";
+
+            if (priceTier <= 3) {
+                tierColor = 'green';
+            } else if (priceTier > 3 && priceTier <= 5) {
+                tierColor = 'yellow';
+            } else if (priceTier > 5 && priceTier <= 8) {
+                tierColor = 'red';
+            } else {
+                tierColor = 'error';
             }
+
             console.log(i);
-            toggleClass(rankedList[i - 1], tierNum, tierColor, 'pending');
+            toggleClass(rankedList[i - 1], tierColor, 'pending');
             indexInTier++;
             if (indexInTier >= tierLength) {
                 priceTier++;
