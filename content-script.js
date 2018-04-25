@@ -78,10 +78,12 @@ var initJetlify = function() {
                 }
             }
 
-            var pricePerlifyList = document.getElementsByClassName('price-perlify');
+            var pricePerlifyList = document.querySelectorAll('.price-perlify.pending');
 
             //styleNodes(pricePerlifyList, ['pending']);
-            rankPrices(pricePerlifyList);
+            if (pricePerlifyList.length) {
+                rankPrices(pricePerlifyList);
+            }
         }
 
         loadCheck++;
@@ -317,10 +319,8 @@ var initJetlify = function() {
         var indexInTier = 0;
 
         var tierLength = Math.round(rankedList.length / 3);
-        console.log(tierLength + ' ' + rankedList.length)
         for (var i = 1; i <= rankedList.length; i++) {
             let currentItem = rankedList[i - 1];
-
             colorizeRank(currentItem, priceTier);
             rankNumber(currentItem, i);
 

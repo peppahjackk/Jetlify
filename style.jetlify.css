@@ -64,9 +64,10 @@
 
 .error {
     border-color: rgba(0, 0, 0, .35);
+    border-width: 1px;
     color: rgba(0, 0, 0, .65);
     margin: 10px auto;
-    width: 60%;
+    width: 80%;
 }
 
 .error svg polygon,

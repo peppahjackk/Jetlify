@@ -7,8 +7,6 @@ USD is currently the only currency supported.
 
 ### To Do before release
 
-* Mutation observer to start pulling data
-* Rank item price vs the rest
 * Unsupported item case
 * Create logo
 * Test
