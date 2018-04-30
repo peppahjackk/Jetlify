@@ -8,10 +8,10 @@ USD is currently the only currency supported.
 ### To Do before release
 
 * Unsupported item case
-* Create logo
 * Test
 * Release
 * Implement animations
+* Highlight deal that gets user to free shipping
 
 
 ### Bugs
